@@ -6,6 +6,7 @@ function App() {
   return (
     <>
       <h1>Hola mundo { API_URL } </h1>
+      <p>Este es el sitio de dev</p>
     </>
   )
 }
