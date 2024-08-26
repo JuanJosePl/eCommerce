@@ -1,1 +1,3 @@
 # Proyecto eCommerce 
+
+ATOMIC DESIGN
