@@ -1,5 +1,5 @@
 import React from 'react'
-import MainHeader from '../organisms/MainHeader'
+
 
  const Products = () => {
   return (

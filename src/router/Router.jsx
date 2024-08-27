@@ -1,3 +1,4 @@
+import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Home from "../components/pages/Home"
 import Error404 from "../components/pages/Error404";

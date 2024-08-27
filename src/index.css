@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-gradient {
+  background: linear-gradient(to right, #1460bc, #2498ce, #36a3dd, #4482c4);
+}
+
+.menu-item {
+  @apply py-5 px-4 hover:text-sky-100 transition-colors duration-300;
+}
