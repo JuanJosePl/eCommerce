@@ -1,21 +1,35 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from '@/components/ui/button'; 
+import { clearLocal, getToken } from "../../../helper/auth";
 
 const MainMenu = () => {
+  const navigate = useNavigate();
+
+  const handleSession = () => {
+    clearLocal();
+    navigate("/");
+  };
+
   return (
-    <nav className="w-full">
-      <ul className="flex justify-end space-x-8 text-white">
-        <li className="flex items-center">
-          <Link className="menu-item" to="/">
-            Inicio
+    <nav className="hidden md:flex items-center space-x-4">
+      <Link className="text-sm font-medium hover:underline" to="/">
+        Productos
+      </Link>
+      {!getToken() ? (
+        <>
+          <Link to="/login">
+            <Button variant="ghost">Iniciar sesión</Button>
           </Link>
-        </li>
-        <li className="flex items-center">
-          <Link className="menu-item" to="/productos">
-            Productos
+          <Link to="/register">
+            <Button variant="ghost">Registrarse</Button>
           </Link>
-        </li>
-      </ul>
+        </>
+      ) : (
+        <Button variant="ghost" onClick={handleSession}>
+          Cerrar sesión
+        </Button>
+      )}
     </nav>
   );
 };
