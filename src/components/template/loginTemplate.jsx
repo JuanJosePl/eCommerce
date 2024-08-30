@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const LoginTemplate = ({ children }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="flex max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Formulario de Login */}
         <div className="w-1/2 p-8">
@@ -14,7 +14,7 @@ const LoginTemplate = ({ children }) => {
         </div>
 
         {/* Tarjeta de Descripción */}
-        <div className="w-1/2 bg-blue-600 text-white p-8 flex items-center justify-center">
+        <div className="w-1/2 bg-indigo-600 text-white p-8 flex items-center justify-center">
           <div>
             <h2 className="text-4xl font-extrabold mb-4">
               Bienvenido de nuevo
