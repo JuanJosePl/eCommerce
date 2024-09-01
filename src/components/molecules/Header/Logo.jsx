@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Logo = () => (
   <div className="flex items-center">
-    <Link to="/">
+    <Link to="/" className="flex items-center">
       <svg
         className="h-10 w-10"
         fill="none"
@@ -21,6 +21,7 @@ const Logo = () => (
         <path d="M2 12c1.6-2 3.4-3 5.5-3 3.5 0 7 3 12.5 0" />
       </svg>
       <span className="sr-only">Logo Ecommerce</span>
+      <span className="ml-2 text-xl font-bold text-gray-800 dark:text-white">OasisShop</span>
     </Link>
   </div>
 );

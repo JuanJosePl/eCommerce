@@ -22,10 +22,10 @@ function Home() {
                   </p>
                 </div>
                 <div className="space-x-4">
-                  <Link to="/products">
+                  <Link to="/productos">
                     <Button>Ver Productos</Button>
                   </Link>
-                  <Link to="/about">
+                  <Link to="/sobre-nosotros">
                     <Button variant="outline">Sobre Nosotros</Button>
                   </Link>
                 </div>

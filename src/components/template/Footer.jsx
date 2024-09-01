@@ -9,18 +9,32 @@ const Footer = () => (
           <h3 className="text-lg font-semibold">Sobre Nosotros</h3>
           <ul className="space-y-1">
             <li>
-              <Link className="text-sm hover:underline" to="/about">
+              <Link
+                className="text-sm hover:underline"
+                to="/sobre-nosotros/historia"
+              >
                 Nuestra Historia
               </Link>
             </li>
             <li>
-              <Link className="text-sm hover:underline" to="/team">
+              <Link
+                className="text-sm hover:underline"
+                to="/sobre-nosotros/equipo"
+              >
                 Equipo
               </Link>
             </li>
             <li>
-              <Link className="text-sm hover:underline" to="/careers">
+              <Link
+                className="text-sm hover:underline"
+                to="/sobre-nosotros/carreras"
+              >
                 Carreras
+              </Link>
+            </li>
+            <li>
+              <Link className="text-sm hover:underline" to="/sostenibilidad">
+                Sostenibilidad
               </Link>
             </li>
           </ul>
@@ -29,22 +43,31 @@ const Footer = () => (
           <h3 className="text-lg font-semibold">Productos</h3>
           <ul className="space-y-1">
             <li>
-              <Link className="text-sm hover:underline" to="/categories">
+              <Link className="text-sm hover:underline" to="/categorias">
                 Categorías
+              </Link>
+            </li>
+            <li>
+              <Link className="text-sm hover:underline" to="/nuevas-llegadas">
+                Nuevas Llegadas
+              </Link>
+            </li>
+            <li>
+              <Link className="text-sm hover:underline" to="/mas-vendidos">
+                Más Vendidos
               </Link>
             </li>
             <li>
               <Link
                 className="text-sm hover:underline"
-                to="/
-                /new-arrivals"
+                to="/comparacion-productos"
               >
-                Nuevas Llegadas
+                Comparar Productos
               </Link>
             </li>
             <li>
-              <Link className="text-sm hover:underline" to="/best-sellers">
-                Más Vendidos
+              <Link className="text-sm hover:underline" to="/lista-deseos">
+                Lista de Deseos
               </Link>
             </li>
           </ul>
@@ -58,19 +81,45 @@ const Footer = () => (
               </Link>
             </li>
             <li>
-              <Link className="text-sm hover:underline" to="/contact">
+              <Link className="text-sm hover:underline" to="/contacto">
                 Contacto
               </Link>
             </li>
             <li>
-              <Link className="text-sm hover:underline" to="/returns">
+              <Link className="text-sm hover:underline" to="/devoluciones">
                 Devoluciones
+              </Link>
+            </li>
+            <li>
+              <Link className="text-sm hover:underline" to="/guia-tallas">
+                Guía de Tallas
               </Link>
             </li>
           </ul>
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Síguenos</h3>
+          <h3 className="text-lg font-semibold">Cuenta</h3>
+          <ul className="space-y-1">
+            <li>
+              <Link className="text-sm hover:underline" to="/login">
+                Iniciar Sesión
+              </Link>
+            </li>
+            <li>
+              <Link className="text-sm hover:underline" to="/register">
+                Registrarse
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="text-sm hover:underline"
+                to="/programa-fidelidad"
+              >
+                Programa de Fidelidad
+              </Link>
+            </li>
+          </ul>
+          <h3 className="text-lg font-semibold mt-4">Síguenos</h3>
           <ul className="space-y-1">
             <li>
               <a
@@ -107,6 +156,9 @@ const Footer = () => (
       </div>
       <div className="mt-6 border-t pt-4 text-center text-xs text-gray-500 dark:text-gray-400">
         © 2024 Ecommerce. Todos los derechos reservados.
+        <Link className="ml-2 hover:underline" to="/terminos-y-condiciones">
+          Términos y Condiciones
+        </Link>
       </div>
     </div>
   </footer>
