@@ -18,7 +18,7 @@ import cuponRoutes from "./routes/couponRoutes.js";
 import devolucionRoutes from "./routes/returnRoutes.js";
 import notificacionRoutes from "./routes/notificationRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
-import { MONGO_URL } from "./config/config.js";
+import { MONGO_URL, PORT } from "./config/config.js";
 
 dotenv.config();
 
