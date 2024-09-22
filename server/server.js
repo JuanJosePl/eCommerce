@@ -18,7 +18,7 @@ import cuponRoutes from "./routes/couponRoutes.js";
 import devolucionRoutes from "./routes/returnRoutes.js";
 import notificacionRoutes from "./routes/notificationRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
-import { MONGO_URL, PORT } from "./config/config.js";
+import { MONGO_URL } from "./config/config.js";
 
 dotenv.config();
 
@@ -73,7 +73,7 @@ app.use(
 app.use(cookieParser());
 
 // Configurar el puerto y la URL de MongoDB desde las variables de entorno
-const PORTC = PORT || 7000;
+const PORTC = process.env.PORT || 7000;
 const MONGOURLC = MONGO_URL;
 
 // Conectar a MongoDB y arrancar el servidor
