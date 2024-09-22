@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: ecommerce-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8000
+      - key: MONGO_URL
+        sync: false
+      - key: SECRET_JWT_KEY
+        sync: false
+      - key: SECRET_REFRESH_KEY
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: FRONTEND_URL
+        value: https://e-commerce-git-dev-juanjosepls-projects.vercel.app
+      - key: OTP_SECRET
+        sync: false

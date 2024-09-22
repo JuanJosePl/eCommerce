@@ -18,14 +18,15 @@ import cuponRoutes from "./routes/couponRoutes.js";
 import devolucionRoutes from "./routes/returnRoutes.js";
 import notificacionRoutes from "./routes/notificationRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
-import { MONGO_URL, PORT } from "./config/config.js";
+import { MONGO_URL } from "./config/config.js";
 
 dotenv.config();
 
 const app = express();
 
 // Configurar el puerto y la URL de MongoDB desde las variables de entorno
-const PORTC = process.env.PORT || 7000;
+const PORT = process.env.PORT || 8000;
+
 const MONGOURLC = MONGO_URL;
 
 // Configuración de Helmet
@@ -56,18 +57,21 @@ app.use(express.json());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Permitir el origen local
-      if (/^http:\/\/localhost:\d+$/.test(origin)) {
-        return callback(null, true);
-      }
-      // Permitir la URL de Vercel (frontend)
+      const allowedOrigins = [
+        /^http:\/\/localhost:\d+$/,
+        "https://e-commerce-git-dev-juanjosepls-projects.vercel.app",
+        "https://ecommerce-1-ijvv.onrender.com",
+      ];
       if (
-        origin === "https://e-commerce-git-dev-juanjosepls-projects.vercel.app"
+        !origin ||
+        allowedOrigins.some((allowed) =>
+          allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
+        )
       ) {
-        return callback(null, true);
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
       }
-      // Denegar el acceso para otros orígenes
-      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     allowedHeaders: ["Authorization", "Content-Type", "Accept"],
@@ -76,15 +80,13 @@ app.use(
 
 app.use(cookieParser());
 
-
-
 // Conectar a MongoDB y arrancar el servidor
 mongoose
   .connect(MONGOURLC)
   .then(() => {
     logger.info("Conexión a la base de datos exitosa.");
-    app.listen(PORTC, () => {
-      logger.info(`El servidor está corriendo en el puerto: ${PORTC}`);
+    app.listen(PORT, () => {
+      logger.info(`El servidor está corriendo en el puerto: ${PORT}`);
     });
   })
   .catch((error) => logger.error(error));
