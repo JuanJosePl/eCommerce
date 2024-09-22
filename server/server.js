@@ -24,6 +24,10 @@ dotenv.config();
 
 const app = express();
 
+// Configurar el puerto y la URL de MongoDB desde las variables de entorno
+const PORTC = process.env.PORT || 7000;
+const MONGOURLC = MONGO_URL;
+
 // Configuración de Helmet
 app.use(
   helmet({
@@ -72,9 +76,7 @@ app.use(
 
 app.use(cookieParser());
 
-// Configurar el puerto y la URL de MongoDB desde las variables de entorno
-const PORTC = process.env.PORT || 7000;
-const MONGOURLC = MONGO_URL;
+
 
 // Conectar a MongoDB y arrancar el servidor
 mongoose
