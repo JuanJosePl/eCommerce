@@ -82,7 +82,7 @@ mongoose
   .then(() => {
     logger.info("Conexión a la base de datos exitosa.");
     app.listen(PORTC, () => {
-      logger.info(`El servidor está corriendo en el puerto: ${PORT}`);
+      logger.info(`El servidor está corriendo en el puerto: ${PORTC}`);
     });
   })
   .catch((error) => logger.error(error));
