@@ -23,7 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment files
 *.env
+
+# Lock files
 yarn.lock
+
+# File uploads and static assets
 uploads
 public
