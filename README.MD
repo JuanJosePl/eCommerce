@@ -1,7 +1,3 @@
-Aquí tienes una versión mejorada y corregida de tu README:
-
----
-
 # Ecommerce React App
 
 ## Descripción
