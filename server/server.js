@@ -23,10 +23,7 @@ import { MONGO_URL } from "./config/config.js";
 dotenv.config();
 
 const app = express();
-
-// Configurar el puerto y la URL de MongoDB desde las variables de entorno
 const PORT = process.env.PORT || 8000;
-
 const MONGOURLC = MONGO_URL;
 
 // Configuración de Helmet
@@ -52,32 +49,27 @@ app.use(
   })
 );
 
-// Configuración de otros middleware
-app.use(express.json());
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [
-        /^http:\/\/localhost:\d+$/,
-        "https://desarrollo-e-commerce-blond-nu.vercel.app/",
-        "https://ecommerce-1o8n.onrender.com",
-      ];
-      if (
-        !origin ||
-        allowedOrigins.some((allowed) =>
-          allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
-        )
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    allowedHeaders: ["Authorization", "Content-Type", "Accept"],
-  })
-);
+// Configuración de CORS
+const allowedOrigins = [
+  /^http:\/\/localhost:\d+$/,
+  "https://desarrollo-e-commerce-blond-nu.vercel.app",
+  "https://ecommerce-1o8n.onrender.com",
+];
 
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.some((allowed) => allowed instanceof RegExp ? allowed.test(origin) : allowed === origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  allowedHeaders: ["Authorization", "Content-Type", "Accept"],
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
 app.use(cookieParser());
 
 // Conectar a MongoDB y arrancar el servidor
