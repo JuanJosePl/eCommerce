@@ -29,6 +29,7 @@
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.4",
     "otp-generator": "^4.0.1",
+    "request-ip": "^3.3.0",
     "validator": "^13.12.0",
     "winston": "^3.14.2"
   }

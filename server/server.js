@@ -19,6 +19,7 @@ import devolucionRoutes from "./routes/returnRoutes.js";
 import notificacionRoutes from "./routes/notificationRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import { MONGO_URL } from "./config/config.js";
+import requestIp from 'request-ip';
 
 dotenv.config();
 
@@ -27,7 +28,10 @@ const PORT = process.env.PORT || 8000;
 const MONGOURLC = MONGO_URL;
 
 // Configurar Express para confiar en el proxy
-app.set('trust proxy', true, 1);
+app.set('trust proxy', true);
+
+// Middleware para obtener la IP del cliente
+app.use(requestIp.mw());
 
 // Configuración de Helmet
 app.use(
@@ -37,8 +41,8 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://trusted.cdn.com"],
         styleSrc: ["'self'", "https://trusted.cdn.com", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "http://localhost:8000"],
-        connectSrc: ["'self'", "http://localhost:8000"],
+        imgSrc: ["'self'", "data:", "http://localhost:8000", "https://ecommerce-1o8n.onrender.com"],
+        connectSrc: ["'self'", "http://localhost:8000", "https://ecommerce-1o8n.onrender.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         objectSrc: ["'none'"],
         frameSrc: ["'none'"],
@@ -99,10 +103,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Definir las rutas de la API
 app.use("/api/usuarios", apiLimiter, usuarioRoutes);
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", apiLimiter, authRoutes);
 app.use("/api/productos", apiLimiter, productRoutes);
 app.use("/api/orders", apiLimiter, orderRoutes);
-app.use("/api/cart", carritoRoutes);
+app.use("/api/cart", apiLimiter, carritoRoutes);
 app.use("/api/cupons", apiLimiter, cuponRoutes);
 app.use("/api/devoluciones", apiLimiter, devolucionRoutes);
 app.use("/api/notificaciones", apiLimiter, notificacionRoutes);
