@@ -59,7 +59,7 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         /^http:\/\/localhost:\d+$/,
-        "https://e-commerce-git-dev-juanjosepls-projects.vercel.app",
+        "https://desarrollo-e-commerce-blond-nu.vercel.app/",
         "https://ecommerce-1o8n.onrender.com",
       ];
       if (
