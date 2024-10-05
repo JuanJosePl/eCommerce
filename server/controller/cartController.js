@@ -32,15 +32,12 @@ export const agregarAlCarrito = async (req, res) => {
 
     await usuario.save();
 
-    // Populate the cart items before sending the response
     await usuario.populate("carrito.producto");
 
-    res
-      .status(200)
-      .json({
-        mensaje: "Producto añadido al carrito.",
-        carrito: usuario.carrito,
-      });
+    res.status(200).json({
+      mensaje: "Producto añadido al carrito.",
+      carrito: usuario.carrito,
+    });
   } catch (error) {
     res.status(500).json({ mensajeError: error.message });
   }
@@ -69,8 +66,66 @@ export const eliminarDelCarrito = async (req, res) => {
     );
     await usuario.save();
 
+    await usuario.populate("carrito.producto");
+
     res.json({
       mensaje: "Producto eliminado del carrito.",
+      carrito: usuario.carrito,
+    });
+  } catch (error) {
+    res.status(500).json({ mensajeError: error.message });
+  }
+};
+
+// Actualizar cantidad de un producto en el carrito
+export const actualizarCantidadCarrito = async (req, res) => {
+  try {
+    const { productoId, cantidad } = req.body;
+    const usuario = await Usuario.findById(req.user._id);
+
+    const itemIndex = usuario.carrito.findIndex(
+      (item) => item.producto.toString() === productoId
+    );
+
+    if (itemIndex > -1) {
+      const producto = await Producto.findById(productoId);
+      if (!producto) {
+        return res.status(404).json({ mensaje: "Producto no encontrado." });
+      }
+
+      if (producto.stock < cantidad) {
+        return res.status(400).json({ mensaje: "Stock insuficiente." });
+      }
+
+      usuario.carrito[itemIndex].cantidad = cantidad;
+    } else {
+      return res
+        .status(404)
+        .json({ mensaje: "Producto no encontrado en el carrito." });
+    }
+
+    await usuario.save();
+
+    await usuario.populate("carrito.producto");
+
+    res.json({
+      mensaje: "Cantidad actualizada en el carrito.",
+      carrito: usuario.carrito,
+    });
+  } catch (error) {
+    res.status(500).json({ mensajeError: error.message });
+  }
+};
+
+// Limpiar todo el carrito
+export const limpiarCarrito = async (req, res) => {
+  try {
+    const usuario = await Usuario.findById(req.user._id);
+    usuario.carrito = [];
+    await usuario.save();
+
+    res.json({
+      mensaje: "Carrito limpiado exitosamente.",
       carrito: usuario.carrito,
     });
   } catch (error) {

@@ -1,5 +1,5 @@
 import Usuario from "../model/userModel.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import Order from "../model/orderModel.js";
 
 // Crear un nuevo usuario
@@ -29,16 +29,34 @@ export const crear = async (req, res) => {
   }
 };
 
-// Obtener todos los usuarios
 export const obtenerTodosLosUsuarios = async (req, res) => {
   try {
-    const datosUsuarios = await Usuario.find().select('-password');
-    if (!datosUsuarios || datosUsuarios.length === 0) {
-      return res.status(404).json({ mensaje: "No se encontraron datos de usuarios." });
-    }
-    res.status(200).json(datosUsuarios);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || '';
+
+    const skip = (page - 1) * limit;
+
+    const query = search
+      ? { $or: [{ name: { $regex: search, $options: 'i' } }, { email: { $regex: search, $options: 'i' } }] }
+      : {};
+
+    const totalUsers = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(limit)
+      .select('-password');
+
+    res.json({
+      users,
+      currentPage: page,
+      totalPages,
+      totalUsers,
+    });
   } catch (error) {
-    res.status(500).json({ mensajeError: error.message });
+    res.status(500).json({ message: 'Error al obtener usuarios', error: error.message });
   }
 };
 
