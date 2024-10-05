@@ -26,6 +26,9 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const MONGOURLC = MONGO_URL;
 
+// Configurar Express para confiar en el proxy
+app.set('trust proxy', true);
+
 // Configuración de Helmet
 app.use(
   helmet({
