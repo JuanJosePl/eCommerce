@@ -1,10 +1,8 @@
 import { API_URL } from "@/constants/env";
 import axios from 'axios';
 
-// Configura axios para enviar siempre las credenciales
 axios.defaults.withCredentials = true;
 
-// Obtener el estado de autenticación del usuario y su rol
 export const getAuthStatus = async () => {
   try {
     const response = await axios.get(`${API_URL}/api/auth/status`);
@@ -18,7 +16,6 @@ export const getAuthStatus = async () => {
   }
 };
 
-// Refrescar token de acceso
 export const refreshAccessToken = async () => {
   try {
     const response = await axios.post(`${API_URL}/api/auth/refresh-token`);
@@ -29,7 +26,6 @@ export const refreshAccessToken = async () => {
   }
 };
 
-// Cerrar sesión
 export const logout = async () => {
   try {
     await axios.post(`${API_URL}/api/auth/logout`);
@@ -40,13 +36,11 @@ export const logout = async () => {
   }
 };
 
-// Verificar si el usuario es administrador
 export const isAdmin = async () => {
   const { user } = await getAuthStatus();
   return user && user.role === 'admin';
 };
 
-// Crear una instancia de axios con interceptores para manejar el refresco de tokens
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
@@ -57,12 +51,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Si la respuesta es un 401 (Unauthorized) y no se ha reintentado aún
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshed = await refreshAccessToken();
       if (refreshed) {
-        // Si el token fue refrescado, reintentamos la solicitud original
         return api(originalRequest);
       }
     }
@@ -70,7 +62,6 @@ api.interceptors.response.use(
   }
 );
 
-// Hacer solicitudes protegidas con manejo automático de tokens
 export const makeProtectedRequest = async (config) => {
   try {
     const response = await api(config);

@@ -26,10 +26,13 @@ const Login = () => {
 
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, data, {
-        withCredentials: true
+        withCredentials: true,
       });
 
-      if (response.data && response.data.mensaje === "Inicio de sesión exitoso") {
+      if (
+        response.data &&
+        response.data.mensaje === "Inicio de sesión exitoso"
+      ) {
         const { isAuthenticated, user } = await getAuthStatus();
         if (isAuthenticated) {
           if (user.role === "admin") {
@@ -48,7 +51,9 @@ const Login = () => {
       if (err.response && err.response.data.mensaje) {
         setError(err.response.data.mensaje);
       } else {
-        setError("Hubo un problema con el servidor. Por favor, inténtalo más tarde.");
+        setError(
+          "Hubo un problema con el servidor. Por favor, inténtalo más tarde."
+        );
       }
     } finally {
       setLoading(false);
