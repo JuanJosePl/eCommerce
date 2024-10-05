@@ -171,13 +171,13 @@ export const login = async (req, res) => {
       .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 60 * 60 * 1000, // 1 hora
       })
       .cookie("refresh_token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
       })
       .json({
@@ -222,7 +222,7 @@ export const refreshToken = async (req, res) => {
       .cookie("access_token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
         maxAge: 60 * 60 * 1000,
       })
       .json({ mensaje: "Token de acceso actualizado exitosamente." });

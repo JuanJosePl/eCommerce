@@ -60,7 +60,7 @@ app.use(
       const allowedOrigins = [
         /^http:\/\/localhost:\d+$/,
         "https://e-commerce-git-dev-juanjosepls-projects.vercel.app",
-        "https://ecommerce-1-ijvv.onrender.com",
+        "https://ecommerce-1o8n.onrender.com",
       ];
       if (
         !origin ||
