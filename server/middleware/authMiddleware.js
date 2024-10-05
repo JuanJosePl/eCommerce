@@ -27,7 +27,6 @@ export const protectRoute = async (req, res, next) => {
   }
 };
 
-
 export const adminRoute = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
@@ -60,7 +59,7 @@ export const refreshAccessToken = async (req, res, next) => {
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: 60 * 60 * 1000 // 1 hora
     });
 

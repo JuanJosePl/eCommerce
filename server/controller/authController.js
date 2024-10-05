@@ -1,13 +1,13 @@
-import jwt from "jsonwebtoken";
 import Usuario from "../model/userModel.js";
-import { SECRET_JWT_KEY, SECRET_REFRESH_KEY } from "../config/config.js";
+import { SECRET_JWT_KEY, SECRET_REFRESH_KEY, NODE_ENV } from "../config/config.js";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyToken,
+  setCookie,
 } from "../service/tokenService.js";
 import crypto from "crypto";
-import { sendOTPEmail, transporter } from "../service/mailService.js";
+import { sendOTPEmail } from "../service/mailService.js";
 import { sendEmailPass } from "../service/requesPasswordMail.js";
 
 // Función para generar OTP
@@ -23,13 +23,11 @@ export const resendOTP = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado." });
     }
 
-    // Generar nuevo OTP
     const otp = generateOTP();
     usuario.otp = otp;
     usuario.otpExpires = Date.now() + 600000; // 10 minutos
     await usuario.save();
 
-    // Enviar nuevo OTP por correo
     await sendOTPEmail(email, otp);
 
     res.json({ mensaje: "Nuevo OTP enviado exitosamente." });
@@ -51,7 +49,6 @@ export const verifyEmail = async (req, res) => {
       return res.status(401).json({ mensaje: "OTP inválido o expirado." });
     }
 
-    // Marcar el email como verificado
     usuario.emailVerificado = true;
     usuario.otp = undefined;
     usuario.otpExpires = undefined;
@@ -76,43 +73,25 @@ export const verifyOTP = async (req, res) => {
       return res.status(401).json({ mensaje: "OTP inválido o expirado." });
     }
 
-    // Limpiar OTP
     usuario.otp = undefined;
     usuario.otpExpires = undefined;
     await usuario.save();
 
-    // Generar tokens
-    const accessToken = jwt.sign(
-      { id: usuario._id, email: usuario.email, role: usuario.role },
-      SECRET_JWT_KEY,
-      { expiresIn: "1h" }
-    );
-    const refreshToken = jwt.sign({ id: usuario._id }, SECRET_REFRESH_KEY, {
-      expiresIn: "7d",
-    });
+    const accessToken = generateAccessToken(usuario);
+    const refreshToken = generateRefreshToken(usuario);
 
-    res
-      .cookie("access_token", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 1000, // 1 hora
-      })
-      .cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
-      })
-      .json({
-        mensaje: "Inicio de sesión exitoso",
-        usuario: {
-          id: usuario._id,
-          nombre: usuario.nombre,
-          email: usuario.email,
-          role: usuario.role,
-        },
-      });
+    setCookie(res, "access_token", accessToken, { maxAge: 60 * 60 * 1000 });
+    setCookie(res, "refresh_token", refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000 });
+
+    res.json({
+      mensaje: "Inicio de sesión exitoso",
+      usuario: {
+        id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        role: usuario.role,
+      },
+    });
   } catch (error) {
     res.status(500).json({ mensajeError: error.message });
   }
@@ -128,13 +107,11 @@ export const register = async (req, res) => {
 
     usuario = new Usuario({ nombre, email, password });
 
-    // Generar OTP
     const otp = generateOTP();
     usuario.otp = otp;
     usuario.otpExpires = Date.now() + 600000; // 10 minutos
     await usuario.save();
 
-    // Enviar OTP por correo
     await sendOTPEmail(email, otp);
 
     res.status(201).json({ mensaje: "Verifica tu correo electrónico" });
@@ -163,32 +140,21 @@ export const login = async (req, res) => {
       return res.status(401).json({ mensaje: "Contraseña incorrecta." });
     }
 
-    // Generar tokens
     const accessToken = generateAccessToken(usuario);
     const refreshToken = generateRefreshToken(usuario);
 
-    res
-      .cookie("access_token", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 60 * 60 * 1000, // 1 hora
-      })
-      .cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
-      })
-      .json({
-        mensaje: "Inicio de sesión exitoso",
-        usuario: {
-          id: usuario._id,
-          nombre: usuario.nombre,
-          email: usuario.email,
-          role: usuario.role,
-        },
-      });
+    setCookie(res, "access_token", accessToken, { maxAge: 60 * 60 * 1000 });
+    setCookie(res, "refresh_token", refreshToken, { maxAge: 7 * 24 * 60 * 60 * 1000 });
+
+    res.json({
+      mensaje: "Inicio de sesión exitoso",
+      usuario: {
+        id: usuario._id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        role: usuario.role,
+      },
+    });
   } catch (error) {
     res.status(500).json({ mensajeError: error.message });
   }
@@ -198,17 +164,13 @@ export const refreshToken = async (req, res) => {
   const refreshToken = req.cookies.refresh_token;
 
   if (!refreshToken) {
-    return res
-      .status(401)
-      .json({ mensaje: "No se proporcionó token de actualización." });
+    return res.status(401).json({ mensaje: "No se proporcionó token de actualización." });
   }
 
   try {
     const decoded = verifyToken(refreshToken, SECRET_REFRESH_KEY);
     if (!decoded) {
-      return res
-        .status(403)
-        .json({ mensaje: "Token de actualización inválido." });
+      return res.status(403).json({ mensaje: "Token de actualización inválido." });
     }
 
     const usuario = await Usuario.findById(decoded.id);
@@ -218,26 +180,26 @@ export const refreshToken = async (req, res) => {
 
     const accessToken = generateAccessToken(usuario);
 
-    res
-      .cookie("access_token", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 60 * 60 * 1000,
-      })
-      .json({ mensaje: "Token de acceso actualizado exitosamente." });
+    setCookie(res, "access_token", accessToken, { maxAge: 60 * 60 * 1000 });
+
+    res.json({ mensaje: "Token de acceso actualizado exitosamente." });
   } catch (error) {
-    return res
-      .status(403)
-      .json({ mensaje: "Token de actualización inválido." });
+    return res.status(403).json({ mensaje: "Token de actualización inválido." });
   }
 };
 
 export const logout = (req, res) => {
-  res
-    .clearCookie("access_token")
-    .clearCookie("refresh_token")
-    .json({ mensaje: "Cierre de sesión exitoso." });
+  res.clearCookie("access_token", {
+    path: "/",
+    sameSite: "none",
+    secure: NODE_ENV === "production",
+  });
+  res.clearCookie("refresh_token", {
+    path: "/",
+    sameSite: "none",
+    secure: NODE_ENV === "production",
+  });
+  res.json({ mensaje: "Cierre de sesión exitoso." });
 };
 
 export const checkAuthStatus = (req, res) => {
@@ -277,9 +239,7 @@ export const requestResetPassword = async (req, res) => {
     const usuario = await Usuario.findOne({ email });
 
     if (!usuario) {
-      return res
-        .status(404)
-        .json({ mensaje: "No existe un usuario con ese correo electrónico." });
+      return res.status(404).json({ mensaje: "No existe un usuario con ese correo electrónico." });
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
@@ -291,13 +251,13 @@ export const requestResetPassword = async (req, res) => {
     await sendEmailPass(email, resetUrl);
 
     res.json({
-      mensaje:
-        "Se ha enviado un correo electrónico para restablecer la contraseña.",
+      mensaje: "Se ha enviado un correo electrónico para restablecer la contraseña.",
     });
   } catch (error) {
     res.status(500).json({ mensajeError: error.message });
   }
 };
+
 export const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;

@@ -24,3 +24,13 @@ export const verifyToken = (token, secretKey) => {
     return null;
   }
 };
+
+export const setCookie = (res, name, value, options = {}) => {
+  res.cookie(name, value, {
+    httpOnly: true,
+    secure: NODE_ENV === 'production',
+    sameSite: 'none',
+    path: '/',
+    ...options,
+  });
+};
