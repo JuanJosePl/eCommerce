@@ -14,9 +14,8 @@ export const ProductProvider = ({ children }) => {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState(null);
   const [currentProduct, setCurrentProduct] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // Asegúrate de definir esto
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Fetch products
   const fetchProducts = useCallback(async () => {
     try {
       setProductsLoading(true);
@@ -29,7 +28,6 @@ export const ProductProvider = ({ children }) => {
     }
   }, []);
 
-  // Fetch categories
   const fetchCategories = useCallback(async () => {
     try {
       setCategoriesLoading(true);
@@ -75,7 +73,6 @@ export const ProductProvider = ({ children }) => {
       formDataToSend.append("categoria", formData.category);
       formDataToSend.append("stock", formData.stock);
 
-      // Llamamos a la función handleImage para manejar la imagen
       const imageFile = await handleImage(formData.image);
       formDataToSend.append("imagen", imageFile);
 
@@ -86,6 +83,7 @@ export const ProductProvider = ({ children }) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       });
 
       console.log("Respuesta del servidor:", response.data);
@@ -95,8 +93,8 @@ export const ProductProvider = ({ children }) => {
         description: "El producto ha sido guardado exitosamente.",
       });
 
-      refetchProducts(); // Asegúrate de que esta función esté definida
-      setIsDialogOpen(false); // Asegúrate de que este estado esté definido
+      fetchProducts();
+      setIsDialogOpen(false);
       setCurrentProduct(null);
     } catch (error) {
       console.error(
@@ -113,18 +111,18 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // Delete product
   const deleteProduct = async (productId) => {
     try {
       await axios.delete(
-        `${API_URL}/api/productos/eliminar/producto/${productId}`
+        `${API_URL}/api/productos/eliminar/producto/${productId}`,
+        { withCredentials: true }
       );
       toast({
         title: "Producto eliminado",
         description: "El producto ha sido eliminado exitosamente.",
       });
 
-      fetchProducts(); // Refresca la lista de productos después de eliminar
+      fetchProducts();
     } catch (error) {
       toast({
         title: "Error",
@@ -134,7 +132,6 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // Función para actualizar productos manualmente
   const refetchProducts = () => {
     fetchProducts();
   };
@@ -153,8 +150,8 @@ export const ProductProvider = ({ children }) => {
         saveProduct,
         deleteProduct,
         fetchProducts,
-        refetchProducts, 
-        setIsDialogOpen, 
+        refetchProducts,
+        setIsDialogOpen,
       }}
     >
       {children}

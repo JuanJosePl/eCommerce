@@ -150,7 +150,7 @@ const UserProfile = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center space-x-4">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={profile.avatar || "/placeholder-avatar.jpg"} alt="Avatar" />
+                <AvatarImage src={profile.avatar} alt="Avatar" />
                 <AvatarFallback>{profile.nombre ? profile.nombre.charAt(0) : 'U'}</AvatarFallback>
               </Avatar>
               <input

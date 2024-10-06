@@ -39,42 +39,38 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
             <TableCell colSpan={7}>No hay productos disponibles.</TableCell>
           </TableRow>
         ) : (
-          productsArray.map((product) => {
-            // Construir la URL de la imagen
-            const imageUrl = product.imagen.startsWith('http') ? product.imagen : `http://localhost:8000${product.imagen}`;
-            return (
-              <TableRow key={product._id}>
-                <TableCell>
-                  <img
-                    src={imageUrl}
-                    alt={product.nombre}
-                    className="w-10 h-10 object-cover rounded"
-                  />
-                </TableCell>
-                <TableCell>{product.nombre}</TableCell>
-                <TableCell>${product.precio.toFixed(2)}</TableCell>
-                <TableCell>{product.stock}</TableCell>
-                <TableCell>{product.categoria}</TableCell>
-                <TableCell>{product.activo ? "Activo" : "Inactivo"}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEdit(product)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onDelete(product._id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })
+          productsArray.map((product) => (
+            <TableRow key={product._id}>
+              <TableCell>
+                <img
+                  src={product.imagen}
+                  alt={product.nombre}
+                  className="w-10 h-10 object-cover rounded"
+                />
+              </TableCell>
+              <TableCell>{product.nombre}</TableCell>
+              <TableCell>${product.precio.toFixed(2)}</TableCell>
+              <TableCell>{product.stock}</TableCell>
+              <TableCell>{product.categoria}</TableCell>
+              <TableCell>{product.activo ? "Activo" : "Inactivo"}</TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(product)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete(product._id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))
         )}
       </TableBody>
     </UiTable>

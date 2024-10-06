@@ -146,16 +146,15 @@ const ProductDialog = ({
                 onChange={handleImageUpload}
                 className="col-span-3"
                 accept="image/*"
-                required={!currentProduct}
               />
             </div>
             {formData.image && (
               <div className="col-span-4">
                 <img
                   src={
-                    typeof formData.image === "string"
-                      ? formData.image
-                      : URL.createObjectURL(formData.image)
+                    formData.image instanceof File
+                      ? URL.createObjectURL(formData.image)
+                      : formData.image
                   }
                   alt="Vista previa"
                   className="mt-2 w-full max-w-xs h-auto mx-auto"

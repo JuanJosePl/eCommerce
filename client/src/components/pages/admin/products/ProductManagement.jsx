@@ -36,7 +36,15 @@ const ProductManagement = () => {
 
   useEffect(() => {
     if (currentProduct) {
-      setFormData(currentProduct);
+      setFormData({
+        name: currentProduct.nombre,
+        price: currentProduct.precio,
+        stock: currentProduct.stock,
+        category: currentProduct.categoria,
+        description: currentProduct.descripcion,
+        isActive: currentProduct.activo,
+        image: currentProduct.imagen,
+      });
     } else {
       setFormData({
         name: "",
@@ -57,13 +65,7 @@ const ProductManagement = () => {
 
   const handleImageUpload = useCallback((e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({ ...prev, image: reader.result }));
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    setFormData((prev) => ({ ...prev, image: file }));
   }, []);
 
   const handleSubmit = (e) => {
