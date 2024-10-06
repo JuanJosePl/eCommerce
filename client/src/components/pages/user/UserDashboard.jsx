@@ -22,7 +22,6 @@ import {
   Package,
   Settings,
   Bell,
-  LogOut,
 } from "lucide-react";
 import { getAuthStatus } from "@/helper/auth";
 import { API_URL } from "@/constants/env";
@@ -274,16 +273,6 @@ const UserDashboard = () => {
               className="w-full justify-start"
             >
               <Settings className="mr-2 h-4 w-4" /> Configuración de la Cuenta
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                // Implement logout logic here
-                navigate("/login");
-              }}
-              className="w-full justify-start"
-            >
-              <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
             </Button>
           </CardContent>
         </Card>
