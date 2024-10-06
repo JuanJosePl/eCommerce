@@ -1,10 +1,9 @@
 import Producto from "../model/productModel.js";
 
-// Crear un nuevo producto
 export const crearProducto = async (req, res) => {
   try {
     const { nombre, descripcion, precio, categoria, stock } = req.body;
-    const imagen = req.file ? `/uploads/${req.file.filename}` : null;
+    const imagen = req.file ? req.file.path : null; // Usa la URL de Cloudinary
 
     if (!imagen) {
       return res.status(400).json({ mensaje: "Se requiere una imagen para el producto." });
@@ -32,12 +31,12 @@ export const crearProducto = async (req, res) => {
   }
 };
 
-// Actualizar un producto por ID
+// Actualizar producto (modificación similar)
 export const actualizarProducto = async (req, res) => {
   try {
     const id = req.params.id;
     const { nombre, descripcion, precio, categoria, stock } = req.body;
-    const imagen = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const imagen = req.file ? req.file.path : undefined; // Usa la URL de Cloudinary
 
     const productoExistente = await Producto.findById(id);
     if (!productoExistente) {
@@ -50,7 +49,7 @@ export const actualizarProducto = async (req, res) => {
       precio: parseFloat(precio),
       categoria,
       stock: parseInt(stock),
-      ...(imagen && { imagen })
+      ...(imagen && { imagen }) // Solo incluye la imagen si está definida
     };
 
     const productoActualizado = await Producto.findByIdAndUpdate(id, datosActualizados, { new: true });

@@ -1,6 +1,7 @@
 import express from "express";
 import multer from 'multer';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import {
   crearProducto,
   obtenerProductoPorId,
@@ -19,18 +20,19 @@ import { protectRoute, adminRoute } from '../middleware/authMiddleware.js';
 
 const productoRoutes = express.Router();
 
-// Configuración de multer para la carga de archivos
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/') // Asegúrate de que esta carpeta exista
+
+// Configuración de multer con Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'products', // Carpeta donde se almacenarán las imágenes en Cloudinary
+    allowedFormats: ['jpg', 'png', 'jpeg', 'gif'],
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)) // Añade la extensión original del archivo
-  }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
+// Rutas para productos
 productoRoutes.post("/producto", protectRoute, adminRoute, upload.single('imagen'), crearProducto);
 productoRoutes.put("/actualizar/producto/:id", protectRoute, adminRoute, upload.single('imagen'), actualizarProducto);
 productoRoutes.get("/productos", obtenerTodosLosProductos);

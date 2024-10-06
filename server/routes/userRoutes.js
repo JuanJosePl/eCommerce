@@ -1,6 +1,7 @@
 import express from "express";
 import multer from 'multer';
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import {
   crear,
   obtenerUsuarioPorId,
@@ -18,37 +19,19 @@ import { protectRoute, adminRoute } from '../middleware/authMiddleware.js';
 
 const usuarioRoutes = express.Router();
 
-// Configuración de multer para el almacenamiento de archivos
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/avatars/');
+
+// Configuración de multer con Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'avatars', // Carpeta para avatares en Cloudinary
+    allowedFormats: ['jpg', 'png', 'jpeg', 'gif'],
   },
-  filename: function (req, file, cb) {
-    cb(null, `${req.user._id}-${Date.now()}${path.extname(file.originalname)}`);
-  }
 });
 
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 1000000 }, // Limita el tamaño del archivo a 1MB
-  fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
-  }
-});
+const upload = multer({ storage });
 
-// Función para verificar el tipo de archivo
-function checkFileType(file, cb) {
-  const filetypes = /jpeg|jpg|png|gif/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb('Error: Solo se permiten imágenes!');
-  }
-}
-
+// Rutas para usuarios
 usuarioRoutes.post("/usuario", protectRoute, adminRoute, crear);
 usuarioRoutes.get("/usuarios", protectRoute, adminRoute, obtenerTodosLosUsuarios);
 usuarioRoutes.get("/usuario/:id", protectRoute, obtenerUsuarioPorId);

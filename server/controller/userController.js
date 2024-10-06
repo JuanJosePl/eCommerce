@@ -220,7 +220,7 @@ export const updateAvatar = async (req, res) => {
 
     const user = await Usuario.findById(req.user._id);
     if (user) {
-      user.avatar = `/uploads/avatars/${req.file.filename}`;
+      user.avatar = req.file.path; // Usa la URL de Cloudinary
       await user.save();
       res.json({ mensaje: "Avatar actualizado con éxito", avatarUrl: user.avatar });
     } else {
@@ -230,3 +230,4 @@ export const updateAvatar = async (req, res) => {
     res.status(500).json({ mensaje: "Error al actualizar el avatar" });
   }
 };
+
