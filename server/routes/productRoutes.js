@@ -20,13 +20,13 @@ import { protectRoute, adminRoute } from '../middleware/authMiddleware.js';
 
 const productoRoutes = express.Router();
 
-
 // Configuración de multer con Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'products', // Carpeta donde se almacenarán las imágenes en Cloudinary
-    allowedFormats: ['jpg', 'png', 'jpeg', 'gif'],
+    folder: 'products',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'gif'],
+    transformation: [{ width: 500, height: 500, crop: 'limit' }]
   },
 });
 

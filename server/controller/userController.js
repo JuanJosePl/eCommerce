@@ -1,6 +1,7 @@
 import Usuario from "../model/userModel.js";
 import bcrypt from "bcryptjs";
 import Order from "../model/orderModel.js";
+import { v2 as cloudinary } from 'cloudinary';
 
 // Crear un nuevo usuario
 export const crear = async (req, res) => {
@@ -220,13 +221,19 @@ export const updateAvatar = async (req, res) => {
 
     const user = await Usuario.findById(req.user._id);
     if (user) {
-      user.avatar = req.file.path; // Usa la URL de Cloudinary
+      if (user.avatar) {
+        const publicId = user.avatar.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+      
+      user.avatar = req.file.path;
       await user.save();
       res.json({ mensaje: "Avatar actualizado con éxito", avatarUrl: user.avatar });
     } else {
       res.status(404).json({ mensaje: "Usuario no encontrado" });
     }
   } catch (error) {
+    console.error("Error al actualizar el avatar:", error);
     res.status(500).json({ mensaje: "Error al actualizar el avatar" });
   }
 };

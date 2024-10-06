@@ -20,12 +20,11 @@ import notificacionRoutes from "./routes/notificationRoutes.js";
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import { MONGO_URL } from "./config/config.js";
 import requestIp from 'request-ip';
-import cloudinary from 'cloudinary';
-
+import { v2 as cloudinary } from 'cloudinary';
 
 dotenv.config();
 
-cloudinary.v2.config({
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
@@ -49,7 +48,7 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://trusted.cdn.com"],
         styleSrc: ["'self'", "https://trusted.cdn.com", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "http://localhost:8000", "https://ecommerce-1o8n.onrender.com"],
+        imgSrc: ["'self'", "data:", "http://localhost:8000", "https://ecommerce-1o8n.onrender.com", "https://res.cloudinary.com"],
         connectSrc: ["'self'", "http://localhost:8000", "https://ecommerce-1o8n.onrender.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         objectSrc: ["'none'"],

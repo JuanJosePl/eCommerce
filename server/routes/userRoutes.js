@@ -19,13 +19,13 @@ import { protectRoute, adminRoute } from '../middleware/authMiddleware.js';
 
 const usuarioRoutes = express.Router();
 
-
 // Configuración de multer con Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'avatars', // Carpeta para avatares en Cloudinary
-    allowedFormats: ['jpg', 'png', 'jpeg', 'gif'],
+    folder: 'avatars',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'gif'],
+    transformation: [{ width: 200, height: 200, crop: 'fill' }]
   },
 });
 

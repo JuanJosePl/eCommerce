@@ -1,9 +1,10 @@
 import Producto from "../model/productModel.js";
+import { v2 as cloudinary } from 'cloudinary';
 
 export const crearProducto = async (req, res) => {
   try {
     const { nombre, descripcion, precio, categoria, stock } = req.body;
-    const imagen = req.file ? req.file.path : null; // Usa la URL de Cloudinary
+    const imagen = req.file ? req.file.path : null;
 
     if (!imagen) {
       return res.status(400).json({ mensaje: "Se requiere una imagen para el producto." });
@@ -31,12 +32,11 @@ export const crearProducto = async (req, res) => {
   }
 };
 
-// Actualizar producto (modificación similar)
 export const actualizarProducto = async (req, res) => {
   try {
     const id = req.params.id;
     const { nombre, descripcion, precio, categoria, stock } = req.body;
-    const imagen = req.file ? req.file.path : undefined; // Usa la URL de Cloudinary
+    const imagen = req.file ? req.file.path : undefined;
 
     const productoExistente = await Producto.findById(id);
     if (!productoExistente) {
@@ -49,8 +49,13 @@ export const actualizarProducto = async (req, res) => {
       precio: parseFloat(precio),
       categoria,
       stock: parseInt(stock),
-      ...(imagen && { imagen }) // Solo incluye la imagen si está definida
+      ...(imagen && { imagen })
     };
+
+    if (imagen && productoExistente.imagen) {
+      const publicId = productoExistente.imagen.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(publicId);
+    }
 
     const productoActualizado = await Producto.findByIdAndUpdate(id, datosActualizados, { new: true });
     res.status(200).json({ mensaje: "Producto actualizado exitosamente.", productoActualizado });
@@ -59,7 +64,6 @@ export const actualizarProducto = async (req, res) => {
   }
 };
 
-// Obtener un producto por ID
 export const obtenerProductoPorId = async (req, res) => {
   try {
     const id = req.params.id;
@@ -73,13 +77,17 @@ export const obtenerProductoPorId = async (req, res) => {
   }
 };
 
-// Eliminar un producto por ID
 export const eliminarProducto = async (req, res) => {
   try {
     const id = req.params.id;
-    const productoExistente = await Producto.findById(id);
-    if (!productoExistente) {
+    const producto = await Producto.findById(id);
+    if (!producto) {
       return res.status(404).json({ mensaje: "Producto no encontrado." });
+    }
+
+    if (producto.imagen) {
+      const publicId = producto.imagen.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(publicId);
     }
 
     await Producto.findByIdAndDelete(id);
@@ -88,6 +96,7 @@ export const eliminarProducto = async (req, res) => {
     res.status(500).json({ mensajeError: error.message });
   }
 };
+
 
 // Buscar productos
 export const buscarProductos = async (req, res) => {
