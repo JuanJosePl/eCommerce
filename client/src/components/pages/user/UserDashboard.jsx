@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -26,7 +24,12 @@ import {
 import { getAuthStatus } from "@/helper/auth";
 import { API_URL } from "@/constants/env";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const UserDashboard = () => {
   const navigate = useNavigate();
