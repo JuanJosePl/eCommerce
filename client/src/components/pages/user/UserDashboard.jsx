@@ -20,16 +20,10 @@ import {
   Package,
   Settings,
   Bell,
+  LogOut,
 } from "lucide-react";
 import { getAuthStatus } from "@/helper/auth";
 import { API_URL } from "@/constants/env";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -74,15 +68,15 @@ const UserDashboard = () => {
   if (loading) {
     return (
       <div className="container mx-auto p-6 space-y-8">
-        <Skeleton className="h-12 w-[250px]" />
+        <div className="h-12 w-[250px] bg-gray-200 animate-pulse rounded"></div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-[125px] w-full" />
+            <div key={i} className="h-[125px] w-full bg-gray-200 animate-pulse rounded"></div>
           ))}
         </div>
         <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-[300px] w-full" />
-          <Skeleton className="h-[300px] w-full" />
+          <div className="h-[300px] w-full bg-gray-200 animate-pulse rounded"></div>
+          <div className="h-[300px] w-full bg-gray-200 animate-pulse rounded"></div>
         </div>
       </div>
     );
@@ -104,18 +98,9 @@ const UserDashboard = () => {
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Bell className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Notificaciones</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button variant="outline" size="icon" aria-label="Notificaciones">
+            <Bell className="h-4 w-4" />
+          </Button>
           <Avatar className="h-20 w-20">
             <AvatarImage
               src={user.avatar ? `${API_URL}${user.avatar}` : undefined}
@@ -276,6 +261,16 @@ const UserDashboard = () => {
               className="w-full justify-start"
             >
               <Settings className="mr-2 h-4 w-4" /> Configuración de la Cuenta
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                // Implement logout logic here
+                navigate("/login");
+              }}
+              className="w-full justify-start"
+            >
+              <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
             </Button>
           </CardContent>
         </Card>
