@@ -19,8 +19,6 @@ import {
   TrendingUp,
   Package,
   Settings,
-  Bell,
-  LogOut,
 } from "lucide-react";
 import { getAuthStatus } from "@/helper/auth";
 import { API_URL } from "@/constants/env";
@@ -29,22 +27,14 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const { isAuthenticated, user } = await getAuthStatus();
-        if (isAuthenticated && user) {
-          setUser(user);
-        } else {
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      const { isAuthenticated, user } = await getAuthStatus();
+      if (isAuthenticated && user) {
+        setUser(user);
+      } else {
         navigate("/login");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -65,25 +55,8 @@ const UserDashboard = () => {
     greeting = "Buenas noches";
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6 space-y-8">
-        <div className="h-12 w-[250px] bg-gray-200 animate-pulse rounded"></div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-[125px] w-full bg-gray-200 animate-pulse rounded"></div>
-          ))}
-        </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="h-[300px] w-full bg-gray-200 animate-pulse rounded"></div>
-          <div className="h-[300px] w-full bg-gray-200 animate-pulse rounded"></div>
-        </div>
-      </div>
-    );
-  }
-
   if (!user) {
-    return <div>No se pudo cargar la información del usuario.</div>;
+    return <div>Cargando...</div>;
   }
 
   return (
@@ -97,18 +70,13 @@ const UserDashboard = () => {
             Bienvenido de vuelta a tu panel personal
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" aria-label="Notificaciones">
-            <Bell className="h-4 w-4" />
-          </Button>
-          <Avatar className="h-20 w-20">
-            <AvatarImage
-              src={user.avatar ? `${API_URL}${user.avatar}` : undefined}
-              alt={user.nombre}
-            />
-            <AvatarFallback>{user.nombre ? user.nombre.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
-          </Avatar>
-        </div>
+        <Avatar className="h-20 w-20">
+          <AvatarImage
+            src={user.avatar ? `${API_URL}${user.avatar}` : undefined}
+            alt={user.nombre}
+          />
+          <AvatarFallback>{user.nombre ? user.nombre.charAt(0) : 'U'}</AvatarFallback>
+        </Avatar>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -204,7 +172,7 @@ const UserDashboard = () => {
                       {order.name}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      Pedido #{order.id} - {order.date}
+                      Pedido #{order.id}
                     </p>
                   </div>
                   <div className="ml-auto font-medium">
@@ -261,16 +229,6 @@ const UserDashboard = () => {
               className="w-full justify-start"
             >
               <Settings className="mr-2 h-4 w-4" /> Configuración de la Cuenta
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                // Implement logout logic here
-                navigate("/login");
-              }}
-              className="w-full justify-start"
-            >
-              <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
             </Button>
           </CardContent>
         </Card>
