@@ -82,26 +82,6 @@ const ProductDialog = ({
               <Label htmlFor="category" className="text-right">
                 Categoría
               </Label>
-              {categories.length > 0 ? (
-                <Select
-                  name="category"
-                  value={formData.category}
-                  onValueChange={(value) =>
-                    handleInputChange({ target: { name: "category", value } })
-                  }
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Selecciona una categoría" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
                 <Input
                   id="category"
                   name="category"
@@ -110,7 +90,6 @@ const ProductDialog = ({
                   className="col-span-3"
                   placeholder="Ingresa una categoría"
                 />
-              )}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">

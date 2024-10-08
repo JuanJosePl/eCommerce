@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -18,8 +20,10 @@ import {
   Gift,
   TrendingUp,
   Package,
+  Bell,  
+  Star,
   Settings,
-  Bell,
+  LogOut,
 } from "lucide-react";
 import { getAuthStatus } from "@/helper/auth";
 import { API_URL } from "@/constants/env";
@@ -29,13 +33,15 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
+import axios from "axios";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,12 +49,33 @@ const UserDashboard = () => {
         const { isAuthenticated, user } = await getAuthStatus();
         if (isAuthenticated && user) {
           setUser(user);
+          fetchUserAvatar(user);
         } else {
           navigate("/login");
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
         navigate("/login");
+      }
+    };
+
+    const fetchUserAvatar = async (userData) => {
+      try {
+        const response = await axios.get(`${API_URL}/api/usuarios/obtener-avatar`, {
+          withCredentials: true,
+        });
+  
+        if (response.status === 200) {
+          const avatarUrl = response.data.avatarUrl;
+          setUser((prevUser) => ({
+            ...prevUser,
+            avatar: avatarUrl
+          }));
+        } else {
+          console.error("Error al obtener el avatar:", response.data.mensaje);
+        }
+      } catch (error) {
+        console.error("Error al obtener el avatar:", error);
       } finally {
         setLoading(false);
       }
@@ -70,6 +97,19 @@ const UserDashboard = () => {
   } else {
     greeting = "Buenas noches";
   }
+
+  const handleAvatarLoad = () => {
+    setAvatarLoaded(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -117,10 +157,14 @@ const UserDashboard = () => {
             </Tooltip>
           </TooltipProvider>
           <Avatar className="h-20 w-20">
-            <AvatarImage
-              src={user.avatar ? `${API_URL}${user.avatar}` : undefined}
-              alt={user.nombre}
-            />
+            {user.avatar && (
+              <AvatarImage
+                src={user.avatar}
+                alt={user.nombre}
+                onLoad={handleAvatarLoad}
+                style={{ display: avatarLoaded ? 'block' : 'none' }}
+              />
+            )}
             <AvatarFallback>{user.nombre ? user.nombre.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
           </Avatar>
         </div>
@@ -222,64 +266,67 @@ const UserDashboard = () => {
                       Pedido #{order.id} - {order.date}
                     </p>
                   </div>
-                  <div className="ml-auto font-medium">
-                    <Badge
-                      variant={
-                        order.status === "Entregado" ? "default" : "secondary"
-                      }
-                    >
-                      {order.status}
-                    </Badge>
-                  </div>
+                  <Badge className="ml-auto h-8">{order.status}</Badge>
                 </div>
               ))}
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => navigate("/pedidos")}
-            >
+            <Button variant="outline" className="w-full" onClick={() => navigate("/pedidos")}>
               Ver todos los pedidos
             </Button>
           </CardFooter>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Acciones Rápidas</CardTitle>
-            <CardDescription>
-              Accede rápidamente a las funciones más utilizadas
-            </CardDescription>
+            <CardTitle>Mejor Valorados</CardTitle>
+            <CardDescription>Productos que has calificado bien</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4">
-            <Button
-              onClick={() => navigate("/perfil")}
-              className="w-full justify-start"
-            >
-              <Settings className="mr-2 h-4 w-4" /> Editar Perfil
-            </Button>
-            <Button
-              onClick={() => navigate("/lista-deseos")}
-              className="w-full justify-start"
-            >
-              <Heart className="mr-2 h-4 w-4" /> Ver Lista de Deseos
-            </Button>
-            <Button
-              onClick={() => navigate("/programa-fidelidad")}
-              className="w-full justify-start"
-            >
-              <Gift className="mr-2 h-4 w-4" /> Programa de Fidelidad
-            </Button>
-            <Button
-              onClick={() => navigate("/configuracion")}
-              className="w-full justify-start"
-            >
-              <Settings className="mr-2 h-4 w-4" /> Configuración de la Cuenta
-            </Button>
+          <CardContent>
+            <div className="flex flex-col space-y-3">
+              {[
+                { id: "A01", name: "Cámara Profesional", rating: 5 },
+                { id: "B02", name: "Parlante Bluetooth", rating: 4 },
+                { id: "C03", name: "Smartwatch Deportivo", rating: 5 },
+              ].map((product) => (
+                <div key={product.id} className="flex items-center">
+                  <Star className="mr-2 h-5 w-5 fill-yellow-500 text-yellow-500" />
+                  <span className="text-sm font-medium">{product.name}</span>
+                  <div className="ml-auto font-bold text-muted-foreground">
+                    {product.rating} estrellas
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
+          <CardFooter>
+            <Button variant="outline" className="w-full" onClick={() => navigate("/productos")}>
+              Ver todos los productos
+            </Button>
+          </CardFooter>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Acciones Rápidas</CardTitle>
+          <CardDescription>Accede rápidamente a las funciones más utilizadas</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Button onClick={() => navigate("/perfil")} className="w-full justify-start">
+            <Settings className="mr-2 h-4 w-4" /> Editar Perfil
+          </Button>
+          <Button onClick={() => navigate("/lista-deseos")} className="w-full justify-start">
+            <Heart className="mr-2 h-4 w-4" /> Ver Lista de Deseos
+          </Button>
+          <Button onClick={() => navigate("/programa-fidelidad")} className="w-full justify-start">
+            <Gift className="mr-2 h-4 w-4" /> Programa de Fidelidad
+          </Button>
+          <Button onClick={handleLogout} variant="destructive" className="w-full justify-start">
+            <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
