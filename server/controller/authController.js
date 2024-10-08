@@ -105,7 +105,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ mensaje: "El usuario ya existe." });
     }
 
-    usuario = new Usuario({ nombre, email, password, avatar });
+    usuario = new Usuario({ nombre, email, password });
 
     const otp = generateOTP();
     usuario.otp = otp;
