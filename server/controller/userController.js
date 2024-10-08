@@ -238,3 +238,23 @@ export const updateAvatar = async (req, res) => {
   }
 };
 
+// Obtener avatar del usuario
+export const obtenerAvatar = async (req, res) => {
+  try {
+    const user = await Usuario.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    if (user.avatar) {
+      res.json({ avatarUrl: user.avatar });
+    } else {
+      res.status(404).json({ mensaje: "El usuario no tiene un avatar" });
+    }
+  } catch (error) {
+    console.error("Error al obtener el avatar:", error);
+    res.status(500).json({ mensaje: "Error al obtener el avatar" });
+  }
+};
+
+

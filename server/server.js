@@ -102,6 +102,12 @@ app.get("/", (req, res) => {
   res.send("Hola, bienvenido al servidor!");
 });
 
+try {
+  console.log('Cloudinary configuration:', cloudinary.config());
+} catch (error) {
+  console.error('Cloudinary configuration error:', error);
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

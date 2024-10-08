@@ -13,7 +13,8 @@ import {
   obtenerHistorialCompras,
   getUserProfile,
   updateUserProfile,
-  updateAvatar
+  updateAvatar,
+  obtenerAvatar,
 } from "../controller/userController.js";
 import { protectRoute, adminRoute } from '../middleware/authMiddleware.js';
 
@@ -43,5 +44,7 @@ usuarioRoutes.get("/historial-compras", protectRoute, obtenerHistorialCompras);
 usuarioRoutes.get('/profile', protectRoute, getUserProfile);
 usuarioRoutes.put('/update/profile', protectRoute, updateUserProfile);
 usuarioRoutes.post('/avatar', protectRoute, upload.single('avatar'), updateAvatar);
+usuarioRoutes.get('/obtener-avatar', protectRoute, obtenerAvatar);
+
 
 export default usuarioRoutes;

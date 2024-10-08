@@ -22,6 +22,7 @@
     "express": "^4.21.0",
     "express-async-handler": "^1.2.0",
     "express-rate-limit": "^7.4.0",
+    "gravatar": "^1.8.2",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
