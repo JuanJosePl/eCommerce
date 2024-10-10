@@ -247,7 +247,7 @@ export const requestResetPassword = async (req, res) => {
     usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
     await usuario.save();
 
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetUrl = `https://desarrollo-e-commerce-blond-nu.vercel.app/reset-password/${resetToken}`;
     await sendEmailPass(email, resetUrl);
 
     res.json({
