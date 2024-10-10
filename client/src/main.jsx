@@ -9,17 +9,20 @@ import { CartProvider } from "./context/CartContext";
 import { GlobalUpdateProvider } from "./context/GlobalUpdateContext";
 import { ProductProvider } from "./context/ProductContext";
 import { UserProvider } from "./context/UserContext";
+import { WishlistProvider } from "./context/WishlistProvider";
 
 createRoot(document.getElementById("root")).render(
   <GlobalUpdateProvider>
     <CartProvider>
       <ProductProvider>
         <UserProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <RouterProvider router={router}>
-              <ScrollToTop />
-            </RouterProvider>
-          </ThemeProvider>
+          <WishlistProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <RouterProvider router={router}>
+                <ScrollToTop />
+              </RouterProvider>
+            </ThemeProvider>
+          </WishlistProvider>
         </UserProvider>
       </ProductProvider>
     </CartProvider>

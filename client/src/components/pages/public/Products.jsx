@@ -23,9 +23,9 @@ const ProductListingPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("featured");
-  const products = productsData.productos || []; // Asegúrate de que `products` sea un array
+  const products = productsData.productos || []; 
 
-  console.log("Products:", products); // Verifica qué es `products`
+  console.log("Products:", products); 
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) =>

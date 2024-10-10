@@ -2,7 +2,13 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const WishlistContext = createContext();
 
-export const useWishlist = () => useContext(WishlistContext);
+export const useWishlist = () => {
+  const context = useContext(WishlistContext);
+  if (!context) {
+    throw new Error('useWishlist must be used within a WishlistProvider');
+  }
+  return context;
+};
 
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
@@ -24,7 +30,7 @@ export const WishlistProvider = ({ children }) => {
 
   const removeFromWishlist = (productId) => {
     setWishlist((prevWishlist) => {
-      const newWishlist = prevWishlist.filter((item) => item.id !== productId);
+      const newWishlist = prevWishlist.filter((item) => item._id !== productId);
       localStorage.setItem("wishlist", JSON.stringify(newWishlist));
       return newWishlist;
     });

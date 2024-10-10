@@ -2,10 +2,14 @@ import React, { Suspense, lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Loader from "@/components/atoms/Loader";
 
+
 // Lazy loading de componentes
 const HomePage = lazy(() => import("../components/pages/public/Home"));
 const Error404 = lazy(() => import("../components/pages/public/Error404"));
 const Products = lazy(() => import("../components/pages/public/Products"));
+const ProductDetails = lazy(() => import("../components/molecules/product/ProductDetails"));
+
+
 const App = lazy(() => import("../components/template/App"));
 const Login = lazy(() => import("../components/pages/public/Login"));
 const Register = lazy(() => import("../components/pages/public/Register"));
@@ -60,6 +64,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Suspense fallback={<Loader />}><HomePage /></Suspense> },
       { path: "productos", element: <Suspense fallback={<Loader />}><Products /></Suspense> },
+      { path: "productos/:id", element: <Suspense fallback={<Loader />}><ProductDetails /></Suspense> },
       { path: "sobre-nosotros", element: <Suspense fallback={<Loader />}><SobreNosotrosPage /></Suspense> },
       { path: "sobre-nosotros/historia", element: <Suspense fallback={<Loader />}><OurHistoryPage /></Suspense> },
       { path: "sobre-nosotros/equipo", element: <Suspense fallback={<Loader />}><TeamPage /></Suspense> },
