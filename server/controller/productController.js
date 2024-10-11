@@ -2,10 +2,12 @@ import Producto from "../model/productModel.js";
 import { v2 as cloudinary } from 'cloudinary';
 
 
-// Crear un nuevo producto
 export const crearProducto = async (req, res) => {
   try {
-    const { nombre, descripcion, precio, categoria, stock } = req.body;
+    console.log("Datos recibidos:", req.body);
+    console.log("Archivos recibidos:", req.files);
+
+    const { nombre, descripcion, precio, categoria, stock, activo } = req.body;
     const imagenes = req.files ? req.files.map(file => file.path) : [];
 
     if (imagenes.length === 0) {
@@ -23,19 +25,20 @@ export const crearProducto = async (req, res) => {
       precio: parseFloat(precio),
       categoria,
       stock: parseInt(stock),
+      activo: activo === 'true',
       imagen: imagenes[0],
       imagenes
     });
 
-    const datosGuardados = await nuevoProducto.save();
-    res.status(201).json({ mensaje: "Producto creado exitosamente.", datosGuardados });
+    const productoGuardado = await nuevoProducto.save();
+    res.status(201).json(productoGuardado);
   } catch (error) {
     console.error("Error en la creación del producto:", error);
-    res.status(500).json({ mensajeError: error.message });
+    res.status(500).json({ mensaje: "Error al crear el producto", error: error.message });
   }
 };
 
-
+// Actualizar un producto existente
 export const actualizarProducto = async (req, res) => {
   try {
     const id = req.params.id;
@@ -72,6 +75,7 @@ export const actualizarProducto = async (req, res) => {
   }
 };
 
+// Obtener un producto por su ID
 export const obtenerProductoPorId = async (req, res) => {
   try {
     const id = req.params.id;
@@ -85,6 +89,7 @@ export const obtenerProductoPorId = async (req, res) => {
   }
 };
 
+// Eliminar un producto
 export const eliminarProducto = async (req, res) => {
   try {
     const id = req.params.id;
@@ -93,8 +98,9 @@ export const eliminarProducto = async (req, res) => {
       return res.status(404).json({ mensaje: "Producto no encontrado." });
     }
 
-    if (producto.imagen) {
-      const publicId = producto.imagen.split('/').pop().split('.')[0];
+    // Eliminar imágenes de Cloudinary
+    for (let imagen of producto.imagenes) {
+      const publicId = imagen.split('/').pop().split('.')[0];
       await cloudinary.uploader.destroy(publicId);
     }
 
@@ -104,7 +110,6 @@ export const eliminarProducto = async (req, res) => {
     res.status(500).json({ mensajeError: error.message });
   }
 };
-
 
 // Buscar productos
 export const buscarProductos = async (req, res) => {
