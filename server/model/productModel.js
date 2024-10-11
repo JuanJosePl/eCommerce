@@ -118,7 +118,12 @@ const esquemaProducto = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    visitas: {
+      type: Number,
+      default: 0,
+    },
   },
+  
   { 
     timestamps: true,
     toJSON: { virtuals: true },
