@@ -25,35 +25,35 @@ const ProductManagement = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [formData, setFormData] = useState({
-    name: "",
-    price: "",
+    nombre: "",
+    precio: "",
     stock: "",
-    category: "",
-    description: "",
-    isActive: true,
-    image: null,
+    categoria: "",
+    descripcion: "",
+    activo: true,
+    imagenes: null,
   });
 
   useEffect(() => {
     if (currentProduct) {
       setFormData({
-        name: currentProduct.nombre,
-        price: currentProduct.precio,
+        nombre: currentProduct.nombre,
+        precio: currentProduct.precio,
         stock: currentProduct.stock,
-        category: currentProduct.categoria,
-        description: currentProduct.descripcion,
-        isActive: currentProduct.activo,
-        image: currentProduct.imagen,
+        categoria: currentProduct.categoria,
+        descripcion: currentProduct.descripcion,
+        activo: currentProduct.activo,
+        imagenes: currentProduct.imagenes,
       });
     } else {
       setFormData({
-        name: "",
-        price: "",
+        nombre: "",
+        precio: "",
         stock: "",
-        category: "",
-        description: "",
-        isActive: true,
-        image: null,
+        categoria: "",
+        descripcion: "",
+        activo: true,
+        imagenes: null,
       });
     }
   }, [currentProduct]);
@@ -63,9 +63,13 @@ const ProductManagement = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }, []);
 
+  const handleSwitchChange = useCallback((checked) => {
+    setFormData((prev) => ({ ...prev, activo: checked }));
+  }, []);
+
   const handleImageUpload = useCallback((e) => {
-    const file = e.target.files[0];
-    setFormData((prev) => ({ ...prev, image: file }));
+    const files = e.target.files;
+    setFormData((prev) => ({ ...prev, imagenes: files }));
   }, []);
 
   const handleSubmit = (e) => {
@@ -124,11 +128,13 @@ const ProductManagement = () => {
       </div>
       {memoizedProductTable}
       <ProductDialog
+        
         isDialogOpen={isDialogOpen}
         setIsDialogOpen={setIsDialogOpen}
         currentProduct={currentProduct}
         formData={formData}
         handleInputChange={handleInputChange}
+        handleSwitchChange={handleSwitchChange}
         handleImageUpload={handleImageUpload}
         handleSubmit={handleSubmit}
         categories={categories}

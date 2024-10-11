@@ -14,7 +14,6 @@ export const ProductProvider = ({ children }) => {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState(null);
   const [currentProduct, setCurrentProduct] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -45,37 +44,29 @@ export const ProductProvider = ({ children }) => {
     fetchCategories();
   }, [fetchProducts, fetchCategories]);
 
-  const handleImage = async (image) => {
-    if (image instanceof File) {
-      return image;
-    } else if (typeof image === "string" && image.startsWith("data:image")) {
-      const response = await fetch(image);
-      const blob = await response.blob();
-      return new File([blob], "image.jpg", { type: "image/jpeg" });
-    } else if (currentProduct && currentProduct.imagen) {
-      return currentProduct.imagen;
-    } else {
-      throw new Error("Se requiere una imagen para el producto.");
-    }
-  };
-
   const saveProduct = async (formData, isEditing = false) => {
     try {
-      const url = currentProduct
+      const url = isEditing
         ? `${API_URL}/api/productos/actualizar/producto/${currentProduct._id}`
         : `${API_URL}/api/productos/producto`;
-      const method = currentProduct ? "put" : "post";
-
+      const method = isEditing ? "put" : "post";
+  
       const formDataToSend = new FormData();
-      formDataToSend.append("nombre", formData.name);
-      formDataToSend.append("descripcion", formData.description);
-      formDataToSend.append("precio", formData.price);
-      formDataToSend.append("categoria", formData.category);
-      formDataToSend.append("stock", formData.stock);
-
-      const imageFile = await handleImage(formData.image);
-      formDataToSend.append("imagen", imageFile);
-
+      formDataToSend.append("nombre", formData.nombre || '');
+      formDataToSend.append("descripcion", formData.descripcion || '');
+      formDataToSend.append("precio", formData.precio || '0');
+      formDataToSend.append("categoria", formData.categoria || '');
+      formDataToSend.append("stock", formData.stock || '0');
+      formDataToSend.append("activo", (formData.activo !== undefined ? formData.activo : true).toString());
+  
+      if (formData.imagenes instanceof FileList) {
+        for (let i = 0; i < formData.imagenes.length; i++) {
+          formDataToSend.append("imagenes", formData.imagenes[i]);
+        }
+      } else if (formData.imagenes instanceof File) {
+        formDataToSend.append("imagenes", formData.imagenes);
+      }
+  
       const response = await axios({
         method,
         url,
@@ -85,16 +76,15 @@ export const ProductProvider = ({ children }) => {
         },
         withCredentials: true,
       });
-
+  
       console.log("Respuesta del servidor:", response.data);
-
+  
       toast({
-        title: currentProduct ? "Producto actualizado" : "Producto creado",
+        title: isEditing ? "Producto actualizado" : "Producto creado",
         description: "El producto ha sido guardado exitosamente.",
       });
-
+  
       fetchProducts();
-      setIsDialogOpen(false);
       setCurrentProduct(null);
     } catch (error) {
       console.error(
@@ -132,10 +122,6 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const refetchProducts = () => {
-    fetchProducts();
-  };
-
   return (
     <ProductContext.Provider
       value={{
@@ -150,8 +136,6 @@ export const ProductProvider = ({ children }) => {
         saveProduct,
         deleteProduct,
         fetchProducts,
-        refetchProducts,
-        setIsDialogOpen,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Table as UiTable,
+  Table,
   TableBody,
   TableCaption,
   TableCell,
@@ -16,11 +16,11 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
 
   if (!Array.isArray(productsArray)) {
     console.log("Productos no válidos:", products);
-    return <p>No hay productos disponibles....</p>;
+    return <p>No hay productos disponibles.</p>;
   }
 
   return (
-    <UiTable>
+    <Table>
       <TableCaption>Lista de productos</TableCaption>
       <TableHeader>
         <TableRow>
@@ -73,7 +73,7 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
           ))
         )}
       </TableBody>
-    </UiTable>
+    </Table>
   );
 };
 

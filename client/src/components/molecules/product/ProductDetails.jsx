@@ -135,7 +135,7 @@ const ProductDetails = () => {
   const handleSubmitQuestion = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/api/productos/preguntas/${id}`, { pregunta: question });
+      await axios.post(`${API_URL}/api/productos/pregunta/${id}`, { pregunta: question });
       toast({
         title: "Pregunta enviada",
         description: "Tu pregunta ha sido enviada y será respondida pronto.",
